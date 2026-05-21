@@ -48,12 +48,9 @@ https://acrobat.adobe.com/id/urn:aaid:sc:AP:a8205397-6761-412f-bed8-7ad075a8cb1c
 
 ## 🟩 [2차 과제: V1.0] 입출력 + 리스트 + 조건문 - 향후 작성 예정
 ### **✨2차 과제 내용:**
-(예시)
-  * 이번 과제는 용사 등록 및 정밀 진단 시스템 구현으로, 사용자로부터 데이터를 입력받아 리스트에 저장하고, 가중치 연산을 통해 결과값을 도출하는 시스템을 구축하는 것입니다. 특히 `if-elif` 조건문과 `and/or` 논리 연산자를 활용하여 상황에 맞는 등급과 특별 칭호를 부여하는 지능형 로직을 완성해야 합니다.
-  * input()으로 용사의 이름, 체력, 마력, 공격력을 입력받아 리스트에 저장.
-  * 가중치 공식을 적용하여 종합 전투력 산출: (체력 * 0.7) + (마력 * 0.5) + (공격력 * 1.8).
-  * if-elif-else를 사용하여 S등급부터 F등급까지 5단계 등급 판정 로직 추가.
-  * and 연산자를 활용하여 '전설의 대마법사' 등 특별 칭호 부여 기능 구현.
+기획 의도: 사용자로부터 수질 오염 물질인 BOD(생화학적 산소요구량) 농도를 직접 입력받아 제거 효율을 수학적으로 연산하고 정밀하게 진단하는 시스템을 구축하고자 했습니다.
+
+관련 문법: 2주차 강의자에서 다룬 input() 함수를 활용한 데이터 입력, 변수(Variable)의 선언 및 명명 규칙, 그리고 정수(int), 실수(float), 문자열(str) 간의 자료형 변환(Type Conversion) 문법을 핵심 기반으로 삼았습니다.
     
 ### **🤖 AI 파트너십 과정**
 (예시) 
@@ -67,64 +64,15 @@ https://acrobat.adobe.com/id/urn:aaid:sc:AP:a8205397-6761-412f-bed8-7ad075a8cb1c
     
 ### **🛠️ Troubleshooting & 기술 회고:**
 (예시) 
-1. **문제 1: 숫자를 입력했는데 계산이 안 되는 현상 (TypeError)**
-    * **원인:** `input()`으로 받은 데이터는 기본적으로 '글자'라서 숫자와 곱셈 연산이 불가능했음.
+1. **문제 1**: 사용자에게 유입수 BOD와 유출수 BOD를 입력받아 제거 효율 공식((유입 - 유출) / 유입)을 계산하려 했으나, 코드가 실행되지 않고 TypeError: unsupported operand type(s) for -: 'str' and 'str'라는 에러가 발생하며 강제 종료
+    * **원인:**파이썬의 input() 함수는 사용자가 숫자를 입력하더라도 무조건 문자열(String) 자료형으로 받아들이기 때문임. 문자열끼리는 뺄셈이나 나눗셈 같은 산술 연산을 할 수 없어서 발생한 문제
     * **해결:** `int()`와 `float()` 함수를 사용하여 입력값을 숫자로 바꾸는 '형변환' 마법을 부려 해결함.
-2. **문제 2: 조건문 뒤에 자꾸 생기는 빨간 줄 (SyntaxError)**
-    * **원인:** `if`와 `elif` 조건식 끝에 마법의 기호인 `:`(콜론)을 자꾸 빠뜨려서 발생함.
-    * **해결:** 파이썬의 모든 조건문과 반복문 끝에는 항상 땡땡(`:`)이 들어가야 한다는 규칙을 학습하고 수정함.
+2. **문제 2**: 법적 방류 기준치를 입력받을 때 int(input())을 사용했더니, 사용자가 4.5나 5.5 같은 소수점이 포함된 정확한 기준치를 입력했을 때 ValueError: invalid literal for int() with base 10 에러가 발생
+    * **원인:** 정수형(int)은 소수점을 포함할 수 없음. 방류 기준치는 오염도에 따라 0.5 단위의 미세한 실수 데이터가 들어올 수 있으므로 정수형 변환은 적합하지 않음
+    * **해결:**소수점을 온전하게 보존하고 연산할 수 있도록 정수형 변환 대신 실수형 자료형인 float() 함수를 적용하여 형변환을 수행
 
-
-     #데이터 입력 및 리스트 저장
-print('===지능형 수질 등급 판독 시스템===')
-water_data=[]
-
-#데이터 입력 받기
-point_name=input('측정 지점명을 입력하세요:')
-in_bod=int(input('유입수 BOD 농도(mg/L)를 입력하세요:'))
-out_bod=int(input('유출수 BOD 농도(mg/L)를 입력하세요:'))
-legal_limit=float(input('법적 방류 기준치(mg/L)를 입력하세요:'))
-
-#입력받은 대이터를 리스트에 순서대로 추가
-water_data.append(point_name)
-water_data.append(in_bod)
-water_data.append(out_bod)
-water_data.append(legal_limit)
-
-#제거 효율 계산_(유입-유출)/유입*100
-efficiency=(water_data[1]-water_data[2])/water_data[1]
-water_data.append(efficiency)
-
-#등급판정
-grade=''
-special_title=''
-
-if efficiency >=95:
-    grade='S(우수)'
-elif efficiency >=85:
-    grade='A(양호)'
-elif efficiency >=75:
-    grade='B(보통)'
-elif efficiency >=65:
-    grade='C(주의)'
-else:
-    grade='F(불량)'
-
-#조건: 효율 95% 이상 and 유출 농도가 기준치의 50%이하
-if efficiency >=95 and water_data[2]<=(water_data[3]/2):
-    special_title='최첨단 친환경 공정'
-
-#결과 출력
-print(f'\n---{water_data[0]}')
-print(f'저장된 데이터 목록:{water_data}')
-print(f'최종 제거 효율:{efficiency:.2f}%')
-print(f'수질 진단 등급: {grade}')
-
-if special_title:
-    print(f'특별 인증: {special_title}')
-print('-*30')
 ### **📁 증빙 자료:**
-  * [2차_AI협업캡처.pdf 첨부 완료] (첨부 후 링크)
+  * [2차_AI협업캡처.pdf 첨부 완료] (file:///C:/Users/USER/Downloads/60231964_%EC%9C%A4%EC%B1%84%EB%AF%BC_%ED%8C%8C%EC%9D%B4%EC%8D%AC_2%EC%B0%A8%EA%B3%BC%EC%A0%9C.pdf)
   * [2차과제_실행결과.jpg]
 <br>
 
@@ -151,20 +99,14 @@ print('-*30')
      * **원인:** 효율 계산공식이 (유입-유출)/유입 *100 이기에 분모에 해당하는 유입수 BOD가 0이하일 경우 연산 오류 발생
      * **해결:**데이터를 입력받는 input_water_data() 함수 내부에 유효성 검사 조건문 if in_bod <= 0:을 추가하여 분모가 0이되는 상황을 차단하고 return 을 통해 함수를 조기 종료 시킴으로써 시스템 안정성을 확보
    
-2차 과제의 일회성 프로그램을 3차 과제 가이드라인에 맞춰 고도화하면서, 파이썬의 핵심인 함수화를 체감했습니다.
-
-수업자료인 9주차 while True 흐름 제어, 10주차 2차원 리스트 저장, 11주차 매개변수와 return을 이용한 데이터 주고받기, 그리고 12주차 스마트 카페 POS 미션의 global 누적 메커니즘까지 모든 문법적 요소들이 어떻게 유기적으로 연결되어 하나의 완성된 어플리케이션이 되는지 깊이 이해할 수 있었습니다.
-
-특히 단순히 코드를 길게 짜는 것이 아니라 역할을 명확히 분리한 함수(입력/계산/진단/출력)로 쪼개어 설계함으로써 코드의 가독성이 높아지고, 유지보수와 디버깅이 훨씬 쉬워진다는 프로그래밍의 본질을 깨닫게 된 뜻깊은 프로젝트였습니다.
 
 
 
-
-   
-    
 ### **📁 증빙 자료:**
-  * [3차_AI협업캡처.pdf 첨부 완료] (첨부 후 링크)
+  * [3차_AI협업캡처.pdf 첨부 완료] (https://acrobat.adobe.com/id/urn:aaid:sc:AP:ed3d59ab-0931-47f8-93a7-b513bfcf92c5)
   * [3차과제_실행결과.jpg]
+  * <img width="507" height="622" alt="스크린샷 2026-05-21 131638" src="https://github.com/user-attachments/assets/0e6c9973-e99b-42ab-bd1d-d9ba2b01608e" />
+
 <br>
 
 ### 🟥 [4차 과제: V4.0] 모듈화 및 데이터 확장 (배열과 함수) - 🌟최종 완성 -- 향후 작성 예정
